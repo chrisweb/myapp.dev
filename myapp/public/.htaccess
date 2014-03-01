@@ -1,0 +1,74 @@
+# this line sets the environment, set it to either "development", "testing" or "production"
+SetEnv APPLICATION_ENVIRONMENT development
+
+# OPTIONS DIRECTIVE
+# disallow directory content listing
+Options -Indexes
+
+# disallow server side includes, disallows also use of exec command
+Options -Includes
+
+# disallow execution of cgi files in this folder
+Options -ExecCGI
+
+# to allow rewrite rules, apache will only resolve symlinks where the user owns the target of the symlink
+Options -FollowSymLinks +SymLinksIfOwnerMatch
+
+# REWRITE RULES
+# start mod_rewrite, this directive enables rewrite rules
+RewriteEngine On
+# Redirect domain.tld to www.domain.tld
+RewriteCond %{HTTP_HOST} ^myapp\.dev$ [NC]
+RewriteRule ^(.*)$ http://www.myapp.dev/$1 [R=301,L]
+# zf rewrite rules, all requests except the ones that point to an existing file get redirected to index.php which will dispatch the request
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ /index.php [NC,L]
+
+# PHP FLAGS
+# disable magic quotes, as of php 5.3.0 they are deprected
+php_flag magic_quotes_gpc off
+# disable register_globals, as of php 5.3.0 they are deprected
+php_flag register_globals off
+
+# enabled by default
+php_flag short_open_tag off
+# disable auto start of sessions
+php_value session.auto_start 0
+
+# disallow url fopen
+php_flag allow_url_fopen off
+# allow gzip compression
+php_flag zlib.output_compression on
+
+# disable some php functions we wont use and dont want to be available
+
+php_flag disable_functions show_source
+
+php_flag disable_functions system
+
+php_flag disable_functions shell_exec
+
+php_flag disable_functions passthru
+
+php_flag disable_functions exec
+
+php_flag disable_functions phpinfo
+
+php_flag disable_functions popen
+
+php_flag disable_functions proc_open
+
+# deflate output filter that allows output from your server to be compressed before being sent to the client
+<FilesMatch ".(js|css)$">
+SetOutputFilter DEFLATE
+</FilesMatch>
+
+# cache expiraten of static files like images, js and css files will be set to 5 days
+# set etags so that the browser knows which file is new
+<FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+Header set Cache-Control "max-age=290304000, public"
+FileETag MTime Size
+</FilesMatch>
