@@ -6,3 +6,5 @@ extras/documentation
 Thumbs.db
 desktop.ini
 nbproject/
+myapp/library/zend/
+myapp/application/caches/
