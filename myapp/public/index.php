@@ -77,8 +77,7 @@ $application = new Zend_Application(
 
 // BOOTSTRAP
 try {
-   $application->bootstrap()
-            ->run();
+   $application->bootstrap()->run();
 } catch (Exception $exception) {
     echo '<html><body><center>'
        . 'An exception occurred while bootstrapping the application.';
