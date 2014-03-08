@@ -1,0 +1,27 @@
+<?php $this->headTitle($this->translate('ERROR')); ?>
+
+<section id="error">
+
+	<h1><?php echo $this->translate($this->errorMessage); ?> :(</h1>
+    
+    <?php if (isset($this->exceptionMessage)) { ?>
+    
+        <h3><?php echo $this->exceptionMessage; ?></h3>
+        <p><?php echo $this->exceptionFile; ?> (<?php echo $this->exceptionLine; ?>)</p>
+    
+    <?php } ?>
+
+	<?php if (isset($this->exceptionTrace)) { ?>
+
+        <?php Zend_Debug::dump($this->exceptionTrace); ?>
+        
+    <?php } ?>
+    <br><br>
+
+    <script type="text/javascript">
+      var GOOG_FIXURL_LANG = (navigator.language || 'en').slice(0,2);
+      var GOOG_FIXURL_SITE = 'http://www.chris.lu'
+    </script>
+    <script src="//linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js"></script>
+
+</section>

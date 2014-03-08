@@ -8,3 +8,5 @@ desktop.ini
 nbproject/
 myapp/library/zend/
 myapp/application/caches/
+*.log
+*.tmp
