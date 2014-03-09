@@ -1,16 +1,50 @@
 <?php
 
+/**
+ * http://mwop.net/blog/231-Creating-Re-Usable-Zend_Application-Resource-Plugins.html
+ */
 class Myapp_Application_Resource_Cache extends Zend_Application_Resource_ResourceAbstract
 {
     
     protected $_cache = null;
     
+    protected $_cacheLifetime = null; // null = infinite cache lifetime
+    
+    protected $_cacheDirectory = null;
+    
+    protected $_cacheMasterFiles = array();
+    
     /**
      * 
-     * @return type
+     * cache resource plugin initialization
+     * 
+     * @return Zend_Cache_Core|null
      */
-    public function init()
+    public function init($options = array())
     {
+        
+        Zend_Debug::dump($options, '$options: ');
+        Zend_Debug::dump($this->getOptions(), '$this->getOptions(): ');
+        
+        foreach ($this->getOptions() as $key => $value) {
+            switch (strtolower($key)) {
+                case 'directory':
+                    $this->_cacheDirectory = $value;
+                    break;
+                case 'lifetime':
+                    $this->_cacheLifetime = $value;
+                    break;
+                case 'lifetime':
+                    $this->_cacheLifetime = $value;
+                    break;
+                case 'masterfiles':
+                    $this->_cacheMasterFiles = $value;
+                    break;
+                default:
+                    throw new Exception('"'.$key.'" option is not supported by cache resource plugin');
+                    break;
+            }
+        }
         
         return $this->getCache();
         
@@ -18,9 +52,15 @@ class Myapp_Application_Resource_Cache extends Zend_Application_Resource_Resourc
 
     /**
      * 
+     * get a cache instance
+     * 
+     * @return Zend_Cache_Core|null
      */
     public function getCache()
     {
+        
+        Zend_Debug::dump($this->_cacheLifetime, '$this->_cacheLifetime: ');
+        Zend_Debug::dump($this->_cacheDirectory, '$this->_cacheDirectory: ');
         
         if (is_null($this->_cache)) {
             
@@ -28,24 +68,32 @@ class Myapp_Application_Resource_Cache extends Zend_Application_Resource_Resourc
                 
                 $frontendOptions = array(
                     'automatic_serialization' => true,
-                    'lifetime' => $cacheLifetime
+                    'lifetime' => $this->_cacheLifetime
                 );
                 
                 $backendOptions = array();
                 
-                $configurationCache = Zend_Cache::factory('Core', 'Apc', $frontendOptions, $backendOptions);
+                $this->_cache = Zend_Cache::factory('Core', 'Apc', $frontendOptions, $backendOptions);
                 
             } else {
+                
+                if (is_null($this->_cacheDirectory)) {
+                    
+                    $this->_cacheDirectory = APPLICATION_PATH.'/caches/';
+                    
+                }
+                
+                if (!is_dir($this->_cacheDirectory)) mkdir($this->_cacheDirectory, 0755);
                 
                 $frontendOptions = array(
                     'master_files' => array(),
                     'automatic_serialization' => true,
-                    'lifetime' => $cacheLifetime
+                    'lifetime' => $this->_cacheLifetime
                 );
                 
-                $backendOptions = array('cache_dir' => $cacheDirectory);
+                $backendOptions = array('cache_dir' => $this->_cacheDirectory);
                 
-                $configurationCache = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
+                $this->_cache = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
                 
             }
             
