@@ -29,7 +29,7 @@ Zend_Registry::set('Autoloader', $autoloader);
 $cacheDirectory = APPLICATION_PATH.'/caches/';
 $configurationPath = APPLICATION_PATH.'/configs/application.ini';
 $configurationName = 'applicationconfiguration';
-$cacheLifetime = 2678400;
+$cacheLifetime = 2678400; // 31 days
 
 // check if the cache directory exists, if not create it
 if (!is_dir($cacheDirectory)) mkdir($cacheDirectory, 0755);
@@ -61,10 +61,10 @@ if (APC_SUPPORT) {
     
 }
 
-if (!$configuration = $configurationCache->load($configurationName)) {
+//if (!$configuration = $configurationCache->load($configurationName)) {
 	$configuration = new Zend_Config_Ini($configurationPath, APPLICATION_ENVIRONMENT);
 	$configurationCache->save($configuration, $configurationName);
-}
+//}
 
 // store configuration in registry
 Zend_Registry::set('Configuration', $configuration);

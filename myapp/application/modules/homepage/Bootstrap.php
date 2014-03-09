@@ -16,9 +16,27 @@ class Homepage_Bootstrap extends Zend_Application_Module_Bootstrap
         
         Zend_Debug::dump($this->getModuleName(), '_initModuleCache: ');
 
-        $resource = $this->getPluginResource('Application_Resource_Cache');
+        $cacheResource = $this->getPluginResource('cache');
         
-        Zend_Debug::dump($resource, '$resource: ');exit;
+        //Zend_Debug::dump($cacheResource, '$cacheResource: ');
+        
+        $defaultOptions = $cacheResource->getOptions();
+        
+        Zend_Debug::dump($defaultOptions, '$defaultOptions: ');
+        
+        $masterfilesOptions = $defaultOptions['masterfiles'];
+        
+        Zend_Debug::dump($masterfilesOptions, '$masterfilesOptions: ');
+        
+        $masterfilesOptions[] = $this->modulePath.'configs/routes.xml';
+        
+        $options = array(
+            'masterfiles' => $masterfilesOptions
+        );
+        
+        $cacheResource->setOptions($options);
+        
+        //Zend_Debug::dump($cacheResource, '$cacheResource: ');exit;
         
     }
     

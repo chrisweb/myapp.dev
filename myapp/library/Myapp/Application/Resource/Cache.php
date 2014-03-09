@@ -2,6 +2,7 @@
 
 /**
  * http://mwop.net/blog/231-Creating-Re-Usable-Zend_Application-Resource-Plugins.html
+ * http://framework.zend.com/manual/1.12/en/zend.application.theory-of-operation.html
  */
 class Myapp_Application_Resource_Cache extends Zend_Application_Resource_ResourceAbstract
 {
@@ -12,7 +13,7 @@ class Myapp_Application_Resource_Cache extends Zend_Application_Resource_Resourc
     
     protected $_cacheDirectory = null;
     
-    protected $_cacheMasterFiles = array();
+    protected $_cacheMasterfiles = array();
     
     /**
      * 
@@ -34,19 +35,11 @@ class Myapp_Application_Resource_Cache extends Zend_Application_Resource_Resourc
                 case 'lifetime':
                     $this->_cacheLifetime = $value;
                     break;
-                case 'lifetime':
-                    $this->_cacheLifetime = $value;
-                    break;
                 case 'masterfiles':
-                    $this->_cacheMasterFiles = $value;
-                    break;
-                default:
-                    throw new Exception('"'.$key.'" option is not supported by cache resource plugin');
+                    $this->_cacheMasterfiles = $value;
                     break;
             }
         }
-        
-        return $this->getCache();
         
     }
 
@@ -86,7 +79,7 @@ class Myapp_Application_Resource_Cache extends Zend_Application_Resource_Resourc
                 if (!is_dir($this->_cacheDirectory)) mkdir($this->_cacheDirectory, 0755);
                 
                 $frontendOptions = array(
-                    'master_files' => array(),
+                    'master_files' => $this->_cacheMasterfiles,
                     'automatic_serialization' => true,
                     'lifetime' => $this->_cacheLifetime
                 );
